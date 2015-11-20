@@ -82,7 +82,8 @@ def run(
     conn_pg = psycopg2.connect(database=dbo, user=du, password=dp)
     update_material_cost(connect, conn_pg, 'inventory')
     update_material_cost(connect, conn_pg, 'supplier')
-    update_material_cost_in_production(connect, conn_pg)
+    # update_material_cost_in_production(connect, conn_pg)
+    update_production_cost_in_production(connect, conn_pg)
     return True
 
 
@@ -158,6 +159,26 @@ def get_dag_production(connect, conn_pg):
     res = [int(val) for val in res]
 
     return res
+
+
+def update_production_cost_in_production(connect, conn_pg):
+    cr = conn_pg.cursor()
+    cr.execute('''
+        SELECT id FROM mrp_production WHERE state = 'done'
+            ''')
+    production_all_ids = [val[0] for val in cr.fetchall()]
+
+    production_ids = get_dag_production(connect, conn_pg)
+    production_ids.reverse()
+    production_remain_ids = list(set(production_all_ids) - set(production_ids))
+    production_all_ids = production_ids + production_remain_ids
+
+    while production_all_ids:
+        print len(production_all_ids), 'production_cost'
+        production_id = production_all_ids.pop()
+        connect.execute('mrp.production', 'costs_generate', production_id)
+
+    return True
 
 
 def update_material_cost_in_production(connect, conn_pg):
