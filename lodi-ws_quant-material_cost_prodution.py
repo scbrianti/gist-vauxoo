@@ -79,7 +79,7 @@ def run(
 
     connect = oerplib.OERP('localhost', port=pod, timeout=3600)
     connect.login(user=uo, passwd=po, database=dbo)
-    conn_pg = psycopg2.connect(database=dbo, user=du, password=dp)
+    conn_pg = psycopg2.connect(database=dbo, user=du, password=dp, host=dh)
     update_material_cost(connect, conn_pg, 'inventory')
     update_material_cost(connect, conn_pg, 'supplier')
     # update_material_cost_in_production(connect, conn_pg)
