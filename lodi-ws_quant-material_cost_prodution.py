@@ -173,10 +173,34 @@ def update_production_cost_in_production(connect, conn_pg):
     production_remain_ids = list(set(production_all_ids) - set(production_ids))
     production_all_ids = production_ids + production_remain_ids
 
+    production_dict = {}
     while production_all_ids:
         print len(production_all_ids), 'production_cost'
+        print len(production_dict), 'production_dict'
         production_id = production_all_ids.pop()
-        connect.execute('mrp.production', 'costs_generate', production_id)
+        if production_dict.get(production_id, False):
+            continue
+        update_recursive(connect, conn_pg, production_id, production_dict)
+    return True
+
+
+def update_recursive(connect, conn_pg, production_id, production_dict):
+    mrp_brw = connect.get('mrp.production').browse(production_id)
+    production_ids = [
+        mv.production_id.id
+        for ml2 in mrp_brw.move_lines2
+        for quant in ml2.quant_ids
+        for mv in quant.history_ids
+        if mv.production_id
+        ]
+
+    for production_id2 in production_ids:
+        if production_dict.get(production_id2, False):
+            continue
+        update_recursive(connect, conn_pg, production_id2, production_dict)
+
+    connect.execute('mrp.production', 'costs_generate', production_id)
+    production_dict[production_id] = True
 
     return True
 
