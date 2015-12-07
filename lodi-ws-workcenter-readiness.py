@@ -44,9 +44,10 @@ def run(
 
 def get_ready_workcenter_production(connect, conn_pg):
     cr = conn_pg.cursor()
-    cr.execute('''
-        SELECT id FROM mrp_production WHERE state = 'done'
-            ''')
+    cr.execute("""
+        SELECT id FROM mrp_production WHERE state in ('done', 'confirmed',
+        'ready', 'in_production')
+            """)
     production_all_ids = [val[0] for val in cr.fetchall()]
 
     initial_len = len(production_all_ids)
