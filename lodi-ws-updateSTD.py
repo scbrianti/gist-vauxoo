@@ -83,6 +83,7 @@ def run(
 
 def get_dag_product(connect, conn_pg):
     res = {}
+    dag = None
     cr = conn_pg.cursor()
 
     cr.execute('''
@@ -101,7 +102,7 @@ def get_dag_product(connect, conn_pg):
     result = cr.fetchall()
 
     if not result:
-        return res
+        return res, dag
 
     for pt1, pt2 in result:
         pt1, pt2 = str(pt1), str(pt2)
@@ -118,11 +119,11 @@ def get_dag_product(connect, conn_pg):
     res = res.split(',')
     res = [int(val) for val in res]
 
-    return res
+    return res, dag
 
 
 def update_std_price(connect, conn_pg):
-    product_ids = get_dag_product(connect, conn_pg)
+    product_ids, dag = get_dag_product(connect, conn_pg)
     print len(product_ids)
     context = {}
     values = {
@@ -131,8 +132,14 @@ def update_std_price(connect, conn_pg):
     count = 0
     for product in product_ids:
         count += 1
+        path = dag.pathnames(str(product))
         print '{product} {count} / {total}'.format(
             product=product, count=count, total=len(product_ids))
+        if path:
+            print product, 'NODE'
+            continue
+        else:
+            print product, 'ROOT'
         context.update({'active_model': 'product.template',
                         'active_id': product})
         wzd_price_id = connect.execute(
