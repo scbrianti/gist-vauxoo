@@ -3,10 +3,6 @@
         "path": "/root/build/Vauxoo/forecast",
         "branch": "8.0"
     },
-    "Vauxoo/odoo/8.0": {
-        "path": "/root/odoo-8.0",
-        "branch": "8.0-vauxoo"
-    },
     "Vauxoo/web/8.0": {
         "path": "/root/web",
         "branch": "8.0"

@@ -57,3 +57,4 @@ $ odoo-instance <action> <instance_name>
 - generate the json configuration file from the oca_dependencies file.
 - manage a configuration file in the home folder to extract the repository
   data.
+- add a version argument to the script.

@@ -3,10 +3,6 @@
         "path": "/root/build/Vauxoo/yoytec",
         "branch": "8.0"
     },
-    "Vauxoo/odoo/8.0": {
-        "path": "/root/odoo-8.0",
-        "branch": "8.0-vauxoo"
-    },
     "Vauxoo/hr/8.0": {
         "path": "/root/hr",
         "branch": "8.0"
