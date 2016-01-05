@@ -199,7 +199,11 @@ def update_recursive(connect, conn_pg, production_id, production_dict):
             continue
         update_recursive(connect, conn_pg, production_id2, production_dict)
 
-    connect.execute('mrp.production', 'costs_generate', production_id)
+    am_id = connect.execute('mrp.production', 'costs_generate', production_id)
+    connect.write(
+        'account.move', [am_id],
+        {'period_id': 52, 'date': '2015-12-31'})
+
     production_dict[production_id] = True
 
     return True
