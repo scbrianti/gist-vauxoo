@@ -200,9 +200,11 @@ def update_recursive(connect, conn_pg, production_id, production_dict):
         update_recursive(connect, conn_pg, production_id2, production_dict)
 
     am_id = connect.execute('mrp.production', 'costs_generate', production_id)
-    connect.write(
-        'account.move', [am_id],
-        {'period_id': 52, 'date': '2015-12-31'})
+    if am_id:
+        print am_id
+        connect.write(
+            'account.move', [am_id],
+            {'period_id': 52, 'date': '2015-12-31'})
 
     production_dict[production_id] = True
 
