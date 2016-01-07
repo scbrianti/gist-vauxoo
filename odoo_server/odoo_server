@@ -4,7 +4,8 @@ MODULE=$2
 TASK=$3
 ACT=" "
 TEST=$4
-
+ODOO_PATH='/root/odoo-8.0'
+DB_USER='root'
 
 echo "Data Base: ${BD}"
 echo "Module(s): ${MODULE}"
@@ -12,13 +13,13 @@ echo "Module(s): ${MODULE}"
 if [ $# -ge 3 ]; then
     if [ $3 == 'all' ];then
         dropdb $BD --if-exists
-        createdb -O kathy -T template0 -E utf-8 $BD
+        createdb -O $DB_USER -T template0 -E utf-8 $BD
         ACT="-i $MODULE"
     elif [ $3 == 'duplicate' ];then
         dropdb $BD --if-exists
         BASEDB=$4
-        echo createdb -O kathy -T $BASEDB -E utf-8 $BD 
-        createdb -O kathy -T $BASEDB -E utf-8 $BD 
+        echo createdb -O $DB_USER -T $BASEDB -E utf-8 $BD
+        createdb -O $DB_USER -T $BASEDB -E utf-8 $BD
         ACT="-i $MODULE"
         TEST="--test-enable --log-level=test"
     elif [ $3 == 'update' ];then
@@ -40,7 +41,7 @@ echo " SERVER OPTIONS: $ACT $TEST"
 echo ""
 echo ""
 
-cd /home/kathy/vx/git/vauxoo/odoo
-./odoo.py -c /home/kathy/.odoorc/yoytec \
+cd $ODOO_PATH
+./odoo.py -c $HOME/.openerp_serverrc \
 --db-filter=$BD -d $BD $ACT $TEST
-# --logfile=/home/kathy/openerp_server.log
+# --logfile=${HOME}/data_dir/test_odoo.log --logrotate
