@@ -1,0 +1,23 @@
+#!/bin/bash
+DOCKERPATH=$1
+
+# Docker configuration
+# RADITZ_PORT="12373"
+# DOCKER_HOST="tcp://raditz.vauxoo.com:$RADITZ_PORT"
+# DOCKER_CERT_PATH="~/.docker_raditz"
+# DOCKER_TLS_VERIFY="1"
+# DOCKER_BIN="/usr/bin/docker1.8"
+# DOCKERVX="DOCKER_HOST=$DOCKER_HOST $DOCKER_CERT_PATH $DOCKER_TLS_VERIFY $DOCKER_BIN"
+# DOCKERVX="DOCKER_HOST=$DOCKER_HOST DOCKER_CERT_PATH=$DOCKER_CERT_PATH DOCKER_TLS_VERIFY=$DOCKER_TLS_VERIFY $DOCKER_BIN"
+
+echo "Import remote host docker variables"
+export DOCKER_HOST=tcp://raditz.vauxoo.com:12373
+export DOCKER_CERT_PATH=~/.docker_raditz
+export DOCKER_TLS_VERIFY=1
+export docker=/usr/bin/docker1.8
+
+echo "Create image"
+$DOCKERPATH/10-build.sh --no-cache
+
+echo "Run container"
+$DOCKERPATH/20-run.sh --entrypoint=bash

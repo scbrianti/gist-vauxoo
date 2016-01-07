@@ -1,0 +1,46 @@
+#!/bin/bash
+BD=$1
+MODULE=$2
+TASK=$3
+ACT=" "
+TEST=$4
+
+
+echo "Data Base: ${BD}"
+echo "Module(s): ${MODULE}"
+
+if [ $# -ge 3 ]; then
+    if [ $3 == 'all' ];then
+        dropdb $BD --if-exists
+        createdb -O kathy -T template0 -E utf-8 $BD
+        ACT="-i $MODULE"
+    elif [ $3 == 'duplicate' ];then
+        dropdb $BD --if-exists
+        BASEDB=$4
+        echo createdb -O kathy -T $BASEDB -E utf-8 $BD 
+        createdb -O kathy -T $BASEDB -E utf-8 $BD 
+        ACT="-i $MODULE"
+        TEST="--test-enable --log-level=test"
+    elif [ $3 == 'update' ];then
+        ACT="-u $MODULE"
+    elif [ $3 == 'install' ];then
+        ACT="-i $MODULE"
+    fi
+fi
+
+if [ $# -ge 4 ]; then
+    if [ $4 == 'test' ];then
+        TEST="--test-enable --log-level=test"
+    else
+        TEST=" "
+    fi
+fi
+
+echo " SERVER OPTIONS: $ACT $TEST"
+echo ""
+echo ""
+
+cd /home/kathy/vx/git/vauxoo/odoo
+./odoo.py -c /home/kathy/.odoorc/yoytec \
+--db-filter=$BD -d $BD $ACT $TEST
+# --logfile=/home/kathy/openerp_server.log

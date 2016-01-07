@@ -1,0 +1,8 @@
+#!/bin/bash
+DOCKERPATH=$1
+
+echo "Create image"
+$DOCKERPATH/10-build.sh --no-cache
+
+echo "Run container"
+$DOCKERPATH/20-run.sh --entrypoint=bash

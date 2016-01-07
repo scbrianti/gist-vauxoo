@@ -1,0 +1,1 @@
+DOCKER_HOST=tcp://raditz.vauxoo.com:12373 DOCKER_CERT_PATH=~/.docker_raditz DOCKER_TLS_VERIFY=1 /usr/bin/docker1.8
