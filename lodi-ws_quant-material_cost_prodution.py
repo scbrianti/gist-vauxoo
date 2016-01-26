@@ -83,7 +83,8 @@ def run(
     update_material_cost(connect, conn_pg, 'inventory')
     update_material_cost(connect, conn_pg, 'supplier')
     # update_material_cost_in_production(connect, conn_pg)
-    update_production_cost_in_production(connect, conn_pg)
+    # /!\ NOTE: Disabling production cost update
+    # update_production_cost_in_production(connect, conn_pg)
     return True
 
 
