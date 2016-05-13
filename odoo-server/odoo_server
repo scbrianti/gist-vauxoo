@@ -4,8 +4,19 @@ MODULE=$2
 TASK=$3
 ACT=" "
 TEST=$4
-ODOO_SERVER="$HOME/vx/git/vauxoo/odoo/odoo.py"
-CONFIG_FILE="$HOME/.openerp_serverrc"
+ODOO_SERVER="/root/odoo-8.0/odoo.py"
+CONFIG_FILE="/root/.openerp_serverrc"
+USER="root"
+
+echo 'BD ' $BD
+echo 'MODULE' $MODULE
+echo 'TASK' $TASK
+echo 'TEST' $TEST
+
+echo '1' $1
+echo '2' $2
+echo '3' $3
+echo '4' $4
 
 echo "Data Base: ${BD}"
 echo "Module(s): ${MODULE}"
