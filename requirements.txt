@@ -1,0 +1,6 @@
+argcomplete
+bs4
+launchpadlib
+meta
+oerplib
+premailer
