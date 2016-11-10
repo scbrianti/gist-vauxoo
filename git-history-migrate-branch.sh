@@ -14,14 +14,14 @@
 # Scripted by:
 # Humberto Arocha <hbto@vauxoo.com>
 
-HOME_DIR=/tmp
+HOME_DIR=/root
 ROOT_DIR=$HOME_DIR/branches
-USR_DST=vauxoo
+USR_DST=vauxoo-dev
 USR_SRC=vauxoo
-SRC=$2
-DST=$3
-DEV=hbto
-VER=8.0
+SRC=l10n-canada
+DST=account-payment
+DEV=osval
+VER=9.0
 # TOKEN=$(cat $HOME_DIR/token.txt)
 # AUTH="\"""Authorization: token $TOKEN""\""
 
@@ -42,10 +42,10 @@ if [ -d "$SRC" ]; then
     rm -rf $SRC
 fi
 echo "Cloning $SRC Project"
-git clone git@github.com:$USR_SRC/$SRC
+git clone git@github.com:$USR_SRC/$SRC -b $VER
 cd $SRC
 echo "Adding remote development branch to $SRC"
-git remote add vauxoo-dev git@github.com:Vauxoo-dev/$SRC
+git remote add vauxoo-dev git@github.com:vauxoo-dev/${SRC}.git
 echo "Switching back to $ROOT_DIR"
 cd $ROOT_DIR
 
@@ -55,10 +55,10 @@ if [ -d "$DST" ]; then
     rm -rf $DST
 fi
 echo "Cloning $DST Project"
-git clone git@github.com:$USR_DST/$DST
+git clone git@github.com:$USR_SRC/$DST -b $VER
 cd $DST
 echo "Adding remote development branch to $DST"
-git remote add vauxoo-dev git@github.com:Vauxoo-dev/$DST
+git remote add vauxoo-dev git@github.com:vauxoo-dev/${DST}.git
 echo "Switching back to $ROOT_DIR"
 cd $ROOT_DIR
 
@@ -112,10 +112,11 @@ while IFS='' read -r MODULE || [[ -n "$MODULE" ]]; do
     git fetch $SRC
 
     echo "Merging migrated module history $MODULE to $VER into $DST"
-    git merge $SRC/$VER-tmp-$MODULE-$DEV --commit
+    git checkout -b $VER-migrate-$MODULE-from-$SRC-$DEV
+    git merge $SRC/$VER-tmp-$MODULE-$DEV --commit --allow-unrelated-histories
 
-    echo "Pushing history for $MODULE module to $USR_DST/$DST"
-    git push $USR_DST $VER
+    echo "Pushing history for $MODULE module to $DST project"
+    git push vauxoo-dev $VER-migrate-$MODULE-from-$SRC-$DEV
 
     echo "Moving inside $ROOT_DIR Folder"
     cd $ROOT_DIR
@@ -130,11 +131,12 @@ while IFS='' read -r MODULE || [[ -n "$MODULE" ]]; do
     git checkout $VER
 
     echo "Removing $MODULE module from $SRC"
+    git checkout -b  $VER-migrate-$MODULE-to-$DST-$DEV
     git rm -rf $MODULE
-    git commit -am "[REM] $MODULE got moved to $USR_DST/$DST project"
-
-    echo "Pushing branch to $USR_SRC project"
-    git push -f $USR_SRC $VER
+    git commit -am "[REM] $MODULE got moved to $DST"
+    
+    echo "Pushing $MODULE removal to $DST"
+    git push vauxoo-dev $VER-migrate-$MODULE-to-$DST-$DEV
 
 done < "$1"
 
