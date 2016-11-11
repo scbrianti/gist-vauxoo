@@ -4,8 +4,10 @@ import oerplib
 import logging
 import click
 import psycopg2
-import dagger
 
+logging.basicConfig(
+    format='%(asctime)s %(message)s', datefmt='%m/%d/%Y %I:%M:%S %p',
+    filename='lodi-ws-updateSTD.log', level=logging.INFO)
 _logger = logging.getLogger(__name__)
 #############################
 # ## Constants Declaration ###
@@ -54,8 +56,6 @@ def get_products(connect, conn_pg):
     [t]  [u]
     That is x and y
     """
-    res = {}
-    dag = None
     cr = conn_pg.cursor()
 
     cr.execute('''
@@ -84,10 +84,17 @@ def get_products(connect, conn_pg):
 def update_std_price(connect, conn_pg):
     product_ids = get_products(connect, conn_pg)
     if not product_ids:
-        print 'No Root Products to Update'
+        _logger.info('No Products to Update')
         return True
 
+    total = len(product_ids)
+    _logger.info('%s products are going to be updated', total)
+
+    count = 0
     for product in product_ids:
+        count += 1
+        _logger.info(
+            'ID: \t%s is being updated. \t%s \tof \t%s', product, count, total)
         connect.execute(
             'wizard.price', 'execute_cron', [product])
     return True
